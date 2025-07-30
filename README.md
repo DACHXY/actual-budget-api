@@ -228,14 +228,14 @@ Error responses:
 
 ```bash
 # Clone the repository
-git clone <repository-url>
+git clone https://github.com/DACHXY/actual-budget-api.git
 cd actual-budget-api
 
 # Install dependencies
 npm install
 
 # Start development server
-npm run dev
+ts-node main.ts
 ```
 
 ### Building
