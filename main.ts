@@ -10,9 +10,10 @@ type ActualApiClient = typeof api;
 dotenv.config();
 
 const app = express();
-const PORT = process.env.ACTUAL_API_PORT || 31001;
-const DATA_DIR = process.env.ACTUAL_API_DATA_DIR || "/var/lib/actual-budget-api";
+const PORT = parseInt(process.env.ACTUAL_API_PORT || "31001");
+const DATA_DIR = process.env.ACTUAL_API_DATA_DIR || "/var/cache/actual-budget-api";
 const SERVER_URL = process.env.ACTUAL_API_SERVER_URL || "http://localhost";
+const LISTEN_ADDR = process.env.ACTUAL_API_LISTEN_ADDR || "127.0.0.1";
 const apiClients = new Map<string, ActualApiClient>();
 
 interface BaseInfo {
@@ -263,7 +264,7 @@ app.use((_: Request, res: Response) => {
   });
 });
 
-app.listen(PORT, () => {
+app.listen(PORT, LISTEN_ADDR, () => {
   console.log(`Actual Budget WebAPI Server running on port ${PORT}`);
   console.log(`Server URL: ${SERVER_URL}`);
   console.log(`Data Directory: ${DATA_DIR}`);

@@ -1,7 +1,10 @@
 {
   description = "Flake utils demo";
 
-  inputs.flake-utils.url = "github:numtide/flake-utils";
+  inputs = {
+    flake-utils.url = "github:numtide/flake-utils";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+  };
 
   outputs =
     {
@@ -12,7 +15,9 @@
     flake-utils.lib.eachDefaultSystem (
       system:
       let
-        pkgs = nixpkgs.legacyPackages.${system};
+        pkgs = import nixpkgs {
+          inherit system;
+        };
       in
       {
         packages = rec {
@@ -24,5 +29,11 @@
           default = actual-budget-api;
         };
       }
-    );
+    )
+    // {
+      nixosModules = rec {
+        actual-budget-api = import ./nix/nixosModule.nix self;
+        default = actual-budget-api;
+      };
+    };
 }
