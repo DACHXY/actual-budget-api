@@ -1,0 +1,6 @@
+.direnv
+actual-cache
+node_modules
+.env
+dist
+result

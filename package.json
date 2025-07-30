@@ -1,0 +1,35 @@
+{
+  "name": "actual-budget-api",
+  "version": "1.0.0",
+  "description": "Web API server for actual budget",
+  "main": "server.js",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dev": "nodemon server.js"
+  },
+  "bin": {
+    "actual-budget-api": "dist/main.js"
+  },
+  "author": "DACHXY",
+  "keywords": [
+    "actual-budget",
+    "webapi",
+    "express",
+    "budget",
+    "transactions"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "@actual-app/api": "^25.7.1",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
+    "@types/node": "^24.1.0",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.1",
+    "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1",
+    "typescript": "^5.8.3"
+  }
+}
