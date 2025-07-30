@@ -12,8 +12,8 @@ let
     types
     literalExpression
     mkIf
-    toString
     ;
+  inherit (builtins) toString;
 
   abaPackage = self.packages.${system}.default;
   cfg = config.services.actual-budget-api;
@@ -68,7 +68,6 @@ in
     systemd.services.actual-budget-api = {
       description = "Actual Budget API";
       wantedBy = [ "multi-user.target" ];
-      after = [ "network-online.target" ];
 
       serviceConfig = {
         DynamicUser = true;
