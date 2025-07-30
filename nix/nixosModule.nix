@@ -12,6 +12,7 @@ let
     types
     literalExpression
     mkIf
+    toString
     ;
 
   abaPackage = self.packages.${system}.default;
@@ -79,7 +80,7 @@ in
       environment = {
         NODE_EXTRA_CA_CERTS = cfg.caCert;
         ACTUAL_API_SERVER_URL = cfg.serverURL;
-        ACTUAL_API_PORT = cfg.listenPort;
+        ACTUAL_API_PORT = toString cfg.listenPort;
         ACTUAL_API_LISTEN_ADDR = cfg.listenHost;
         ACTUAL_API_DATA_DIR = "/var/cache/actual-budget-api";
       };
