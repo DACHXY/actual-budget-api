@@ -34,6 +34,17 @@ in
       '';
     };
 
+    logLevel = mkOption {
+      type = types.enum [
+        "debug"
+        "info"
+      ];
+      default = "debug";
+      description = ''
+        Log level.
+      '';
+    };
+
     listenHost = mkOption {
       type = types.str;
       example = "0.0.0.0";
@@ -82,6 +93,7 @@ in
         ACTUAL_API_PORT = toString cfg.listenPort;
         ACTUAL_API_LISTEN_ADDR = cfg.listenHost;
         ACTUAL_API_DATA_DIR = "/var/cache/actual-budget-api";
+        ACTUAL_API_LOG_LEVEL = cfg.logLevel;
       };
     };
   };

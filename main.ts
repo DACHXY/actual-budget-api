@@ -14,6 +14,7 @@ const PORT = parseInt(process.env.ACTUAL_API_PORT || "31001");
 const DATA_DIR = process.env.ACTUAL_API_DATA_DIR || "/var/cache/actual-budget-api";
 const SERVER_URL = process.env.ACTUAL_API_SERVER_URL || "http://localhost";
 const LISTEN_ADDR = process.env.ACTUAL_API_LISTEN_ADDR || "127.0.0.1";
+const LOG_LEVEL = process.env.ACTUAL_API_LOG_LEVEL || "info";
 const apiClients = new Map<string, ActualApiClient>();
 
 interface BaseInfo {
@@ -108,6 +109,16 @@ async function initApiClient(password: string): Promise<ActualApiClient> {
 app.use(cors());
 app.use(express.json());
 
+app.use((req: Request, _: Response, next: NextFunction) => {
+  console.log(`[${req.method}] ${req.originalUrl}`);
+
+  if (LOG_LEVEL == "info") {
+    console.log('Body:', req.body);
+  }
+
+  next();
+});
+
 process.on("SIGTERM", cleanup);
 process.on("SIGINT", cleanup);
 
@@ -139,7 +150,7 @@ app.post('/budget/:budgetId/transactions', validateAuth, asyncHandler(async (req
     transaction.cleared = (transaction.cleared == undefined) ? false : transaction.cleared
     transaction.amount = transaction.amount * 100
 
-    const result = await apiClient.importTransactions(transaction.account, [transaction]);
+    const result = await apiClient.addTransactions(transaction.account, [transaction]);
 
     res.json({
       success: true,
@@ -153,7 +164,6 @@ app.post('/budget/:budgetId/transactions', validateAuth, asyncHandler(async (req
       details: (error as Error).message
     });
   };
-
 }))
 
 // Get Accounts
@@ -265,7 +275,7 @@ app.use((_: Request, res: Response) => {
 });
 
 app.listen(PORT, LISTEN_ADDR, () => {
-  console.log(`Actual Budget WebAPI Server running on port ${PORT}`);
+  console.log(`Actual Budget WebAPI Server running on ${LISTEN_ADDR}:${PORT}`);
   console.log(`Server URL: ${SERVER_URL}`);
   console.log(`Data Directory: ${DATA_DIR}`);
 })

@@ -24,6 +24,12 @@
           actual-budget-api = pkgs.callPackage ./nix/package.nix { };
           default = actual-budget-api;
         };
+
+        apps = rec {
+          actual-budget-api = flake-utils.lib.mkApp { drv = self.packages.${system}.default; };
+          default = actual-budget-api;
+        };
+
         devShells = rec {
           actual-budget-api = pkgs.callPackage ./nix/shell.nix { };
           default = actual-budget-api;
