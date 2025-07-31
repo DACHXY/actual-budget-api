@@ -1,5 +1,7 @@
 # Actual Budget API
 
+**Note**: This is an unofficial API wrapper for Actual Budget. Make sure you have a running Actual Budget server instance to connect to.
+
 A RESTful Web API server for [Actual Budget](https://actualbudget.org/) that provides programmatic access to your budget data, transactions, accounts, and categories.
 
 ## Features
@@ -11,7 +13,6 @@ A RESTful Web API server for [Actual Budget](https://actualbudget.org/) that pro
 - **Budget Analysis**: Access monthly budget data
 - **Multi-Budget Support**: Work with multiple budgets using different credentials
 - **Connection Pooling**: Efficient API client management with connection reuse
-- **CORS Support**: Cross-origin resource sharing enabled
 - **Health Monitoring**: Built-in health check endpoint
 
 ## Installation
@@ -21,10 +22,11 @@ A RESTful Web API server for [Actual Budget](https://actualbudget.org/) that pro
 ```bash
 npm install
 npm run build
+
 node dist/main.js
 ```
 
-### Using Nix (Recommended)
+### Using Nix
 
 This project includes Nix flake support for reproducible development environments:
 
@@ -34,6 +36,43 @@ nix develop
 
 # Build the package
 nix build
+
+# Run the package
+nix run
+```
+
+### Using NixOS Modules (flake)
+
+```nix
+# flake.nix
+{
+  inputs = {
+    actual-budget-api = {
+      url = "github:DACHXY/actual-budget-api";
+      inputs.nixpkgs.follows = "nixpkgs"; # Optional
+    };
+  };
+  outputs = { ... }@inputs: {
+    nixosConfigurations.yourSystem = {
+      modules = [
+        inputs.actual-budget-api.nixosModules.default
+        ./configuration.nix
+      ];
+    };
+  };
+}
+
+# configuration
+{
+  ...
+}: {
+  services.actual-budget-api = {
+    enable = true;
+    listenPort = 31001;
+    listenHost = "127.0.0.1";
+    serverURL = "https://example.domain";
+  };
+}
 ```
 
 ## Configuration
@@ -42,27 +81,11 @@ The server can be configured using environment variables:
 
 ```bash
 # Server Configuration
-ACTUAL_API_PORT=31001                                    # API server port (default: 31001)
-ACTUAL_API_DATA_DIR=/var/lib/actual-budget-api          # Data directory (default: /var/lib/actual-budget-api)
-ACTUAL_API_SERVER_URL=http://localhost                   # Actual Budget server URL (default: http://localhost)
-```
-
-Create a `.env` file in your project root:
-
-```env
-ACTUAL_API_PORT=31001
-ACTUAL_API_DATA_DIR=./data
-ACTUAL_API_SERVER_URL=https://your-actual-server.com
-```
-
-## Usage
-
-### Starting the Server
-
-```bash
-# Production mode
-npm run build
-node dist/main.js
+ACTUAL_API_SERVER_URL=https://example.domain/
+ACTUAL_API_PORT=31001 # API litening port
+ACTUAL_API_LISTEN_ADDR=127.0.0.1 # API listen host
+ACTUAL_API_DATA_DIR=/var/cache/actual-budget-api # Cache directory
+ACTUAL_API_LOG_LEVEL=info # debug, info
 ```
 
 ### Authentication
@@ -216,61 +239,6 @@ Error responses:
 }
 ```
 
-## Development
-
-### Prerequisites
-
-- Node.js 18+
-- TypeScript
-- Access to an Actual Budget server
-
-### Setup
-
-```bash
-# Clone the repository
-git clone https://github.com/DACHXY/actual-budget-api.git
-cd actual-budget-api
-
-# Install dependencies
-npm install
-
-# Start development server
-ts-node main.ts
-```
-
-### Building
-
-```bash
-npm run build
-```
-
-### Project Structure
-
-```
-├── main.ts          # Main server file
-├── package.json       # Node.js dependencies
-├── tsconfig.json      # TypeScript configuration
-├── flake.nix          # Nix flake configuration
-└── nix/
-    ├── package.nix    # Nix package definition
-    └── shell.nix      # Development shell
-```
-
-## Connection Management
-
-The API server efficiently manages connections to your Actual Budget server:
-
-- **Connection Pooling**: Reuses existing connections based on server URL and password
-- **Graceful Shutdown**: Properly closes all connections on server termination
-- **Error Handling**: Robust error handling with detailed error messages
-
-## Security Considerations
-
-- All authentication is handled through request body parameters
-- Passwords are not logged or exposed in responses
-- CORS is enabled for cross-origin requests
-- Connections are properly managed and cleaned up
-
 ## License
 
 MIT
@@ -288,5 +256,3 @@ For issues and questions:
 3. Open an issue on the project repository
 
 ---
-
-**Note**: This is an unofficial API wrapper for Actual Budget. Make sure you have a running Actual Budget server instance to connect to.
